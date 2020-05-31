@@ -90,7 +90,7 @@ function createLocation(Latitude , Longitude){
 async function getcurrentWeather(lat,lon){
 
 
-    let url = `http://api.weatherapi.com/v1/forecast.json?key=0c6ecd00b4c34857933173038203105&q=${lat},${lon}&days=3` 
+    let url = `https://api.weatherapi.com/v1/forecast.json?key=0c6ecd00b4c34857933173038203105&q=${lat},${lon}&days=3` 
     let response = await fetch(url) 
     let data = await response.json()
     console.log(data)
