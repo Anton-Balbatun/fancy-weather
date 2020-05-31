@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fancy Weather</title>
+    <link rel="stylesheet" href="reset200802.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/ac61d9c21f.js" crossorigin="anonymous"></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v1.8.1/mapbox-gl.css' rel='stylesheet' />
+</head>
+<body>
+
+    <div class="wrapper content defaultPage">
+        <section class="controlBlock">
+
+            <button class="switchBackground"><i class="fas fa-sync"></i></button>
+            <select class="switchLanguage">
+                <option class="en language">EN</option>
+                <option class="ru language">RU</option>
+                <option class="be language">BE</option>
+            </select>
+            <button class="switchTemperature far">°F</button>
+            <button class="switchTemperature cel">°С</button>
+            <input type="text" class='citySearch' placeholder="Search city or ZIP">
+            <button class="searchButton"> Search</button>
+
+        </section>
+
+        <section class='weatherOnToday'>
+
+        </section>
+
+        <section class="weatherOnNextDays">
+
+        </section>
+
+        <section class="locationData">
+            <div id='map' style='width: 400px; height: 300px;'></div>
+        </section>
+
+    </div>
+
+    <script src="script.js" type="module"></script>
+</body>
+</html>
+
