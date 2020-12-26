@@ -52,8 +52,6 @@ document.querySelector('.searchButton').addEventListener('click',getPosition)
 async function getPosition(){
 
     console.log( document.querySelector('#Lattitude'))
-    document.querySelector('#Lattitude').remove()
-    document.querySelector('#Longitude').remove()
     let city = document.querySelector('.citySearch').value
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
     let response = await fetch(url) 
