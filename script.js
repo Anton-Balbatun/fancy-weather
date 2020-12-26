@@ -42,12 +42,15 @@ async function getcurrentPosition(){
         let Longitude  = arr[0]
         let Latitude = arr[1]
         createLocation(Latitude ,Longitude)
-        getcurrentWeather(Latitude ,Longitude)
+        getCurrentWeather(Latitude ,Longitude)
 
 }
 
 
 document.querySelector('.searchButton').addEventListener('click',getPosition)
+document.querySelector('.citySearch').addEventListener('keyup', (event)=>{ if(event.key === "Enter"){
+    getPosition()
+}} )
 
 async function getPosition(){
 
@@ -60,7 +63,7 @@ async function getPosition(){
     let Latitude = arr[0]
     let Longitude = arr[1]
     createLocation(Longitude , Latitude)
-    getcurrentWeather(Longitude , Latitude)
+    getCurrentWeather(Longitude , Latitude)
 
 }
 
@@ -80,7 +83,7 @@ async function getPosition(){
 
 }
 
-async function getcurrentWeather(lat,lon){
+async function getCurrentWeather(lat,lon){
 
     let url = `https://api.weatherapi.com/v1/forecast.json?key=0c6ecd00b4c34857933173038203105&q=${lat},${lon}&days=3` 
     let response = await fetch(url) 
@@ -92,11 +95,12 @@ async function getcurrentWeather(lat,lon){
 
 function createWeather(data){
 
-    document.querySelector('.currentWeather').innerHTML = '' 
-    document.querySelector('.currentWeather').innerHTML = `<p class='avg_temp_c'>${data.current.temp_c}°С</p>
-    <p>${data.current.feelslike_c} </p>
-    <p>${data.current.condition.text}</p>
-    <img src="${data.current.condition.icon}" alt="">`
+    
+
+    document.querySelector('.avg_temp_c').innerHTML= `${data.current.temp_c}`
+    document.querySelector('.feelsLike_c').innerHTML= `${data.current.feelslike_c}`
+    document.querySelector('.weatherConditionText').innerHTML= `${data.current.condition.text}`
+    document.querySelector('.weatherIcon').src= `${data.current.condition.icon}`
     
 
 }
