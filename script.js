@@ -6,10 +6,10 @@ var map = new mapboxgl.Map({
     zoom: 8,
     style: 'mapbox://styles/mapbox/streets-v11'
 });
+var currentBgNumber = 0;
 
 document.querySelector('.switchBackground').addEventListener('click',changeBackgroundImg)
 getCurrentPosition()
-document.querySelector('.defaultPage').style.backgroundImage = `url(assets/Background1.jpg)`
 
 function changeBackgroundImg(){
 
@@ -22,26 +22,13 @@ function changeBackgroundImg(){
 
     let pageArray = [firstPagePath,secondPagePath,thirdPagePath]
 
-
-    for (let i = 0; i < pageArray.length; i++) {
-        console.log(pageArray[i])
-        console.log(defaultPageDomSelector.style.backgroundImage.replace(/"/g,'') )
-        
-        if(defaultPageDomSelector.style.backgroundImage.replace(/"/g,'') == pageArray[i]) {
-
-            if (pageArray[i] == pageArray[pageArray.length-1] ){
-                defaultPageDomSelector.style.backgroundImage = pageArray[0]
-                break;
-            }
-            
-            defaultPageDomSelector.style.backgroundImage = pageArray[i+1]
-            break;
-            
-              
-        } 
-        
+    if (currentBgNumber < pageArray.length - 1){
+        defaultPageDomSelector.style.backgroundImage = pageArray[currentBgNumber + 1]
+        currentBgNumber++
+    } else {
+        defaultPageDomSelector.style.backgroundImage = pageArray[0]
+        currentBgNumber = 0
     }
-
 
 }
 
