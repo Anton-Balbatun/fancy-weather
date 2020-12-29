@@ -8,32 +8,44 @@ var map = new mapboxgl.Map({
 });
 
 document.querySelector('.switchBackground').addEventListener('click',changeBackgroundImg)
-getcurrentPosition()
+getCurrentPosition()
+document.querySelector('.defaultPage').style.backgroundImage = `url(assets/Background1.jpg)`
 
 function changeBackgroundImg(){
 
-    let currentStyle =  document.querySelector('.content').className 
+    let defaultPageDomSelector = document.querySelector('.defaultPage')
 
-    switch(currentStyle){
+    let firstPagePath = `url(assets/Background1.jpg)`
+    let secondPagePath = `url(assets/Background2.jpg)`
+    let thirdPagePath = `url(assets/Background3.jpg)`
+    console.log(defaultPageDomSelector.style.backgroundImage.replace(/"/g,'') )
 
-        case 'wrapper content defaultPage':
-            document.querySelector('.content').classList.add('secondPage') ;
-            document.querySelector('.content').classList.remove('defaultPage') ;
+    let pageArray = [firstPagePath,secondPagePath,thirdPagePath]
+
+
+    for (let i = 0; i < pageArray.length; i++) {
+        console.log(pageArray[i])
+        console.log(defaultPageDomSelector.style.backgroundImage.replace(/"/g,'') )
+        
+        if(defaultPageDomSelector.style.backgroundImage.replace(/"/g,'') == pageArray[i]) {
+
+            if (pageArray[i] == pageArray[pageArray.length-1] ){
+                defaultPageDomSelector.style.backgroundImage = pageArray[0]
+                break;
+            }
+            
+            defaultPageDomSelector.style.backgroundImage = pageArray[i+1]
             break;
-        case 'wrapper content secondPage':
-            document.querySelector('.content').classList.add('thirdPage')  ;
-            document.querySelector('.content').classList.remove('secondPage') ;
-            break;   
-        case 'wrapper content thirdPage':
-            document.querySelector('.content').classList.add('defaultPage')  ;
-            document.querySelector('.content').classList.remove('thirdPage') ;
-            break;  
-                        
+            
+              
+        } 
+        
     }
-    
+
+
 }
 
-async function getcurrentPosition(){
+async function getCurrentPosition(){
      
         let url = `https://ipinfo.io/json?token=3bd29cca703424` 
 
@@ -64,7 +76,6 @@ document.querySelector('.citySearch').addEventListener('keyup', (event)=>{ if(ev
 
 async function getPosition(){
 
-    console.log( document.querySelector('#Lattitude'))
     let city = document.querySelector('.citySearch').value
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
     try {
@@ -78,7 +89,21 @@ async function getPosition(){
         
     }
 
-    let arr = data.features[0].center
+
+    if(data.features[0] === undefined){
+        alert(`несуществуещие место`)
+    }
+    
+    try {
+
+        var arr = data.features[0].center
+        
+    } catch (e) {
+
+        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
+        
+    }
+
     let Latitude = arr[0]
     let Longitude = arr[1]
     createLocation(Longitude , Latitude)
@@ -88,8 +113,6 @@ async function getPosition(){
 
 
  function createLocation(Latitude , Longitude){
-
-    console.log( document.querySelector('#Lattitude'))
 
    document.querySelector('#Lattitude').innerHTML =`Latitude:${Latitude}` 
    document.querySelector('#Longitude').innerHTML =`Latitude:${Longitude}`
