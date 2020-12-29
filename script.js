@@ -6,10 +6,44 @@ var map = new mapboxgl.Map({
     zoom: 8,
     style: 'mapbox://styles/mapbox/streets-v11'
 });
+
+
+
 var currentBgNumber = 0;
 
+document.querySelector('.searchButton').addEventListener('click',getPosition)
+
+document.querySelector('.citySearch')
+.addEventListener('keyup', (event)=>{ if(event.key === "Enter"){getPosition()}} )
+
 document.querySelector('.switchBackground').addEventListener('click',changeBackgroundImg)
+
+document.querySelector('#countrySearch').addEventListener('keyup',autocomplete)
+
 getCurrentPosition()
+
+async function getCurrentPosition(){
+     
+    let url = `https://ipinfo.io/json?token=3bd29cca703424` 
+
+    try {
+
+        let response = await fetch(url) 
+        var data = await response.json()
+        
+    } catch (e) {
+
+        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
+
+    }
+
+    let arr = data.loc.split(',').reverse()
+    let Longitude  = arr[0]
+    let Latitude = arr[1]
+    createLocation(Latitude ,Longitude)
+    getCurrentWeather(Latitude ,Longitude)
+
+}
 
 function changeBackgroundImg(){
 
@@ -18,7 +52,6 @@ function changeBackgroundImg(){
     let firstPagePath = `url(assets/Background1.jpg)`
     let secondPagePath = `url(assets/Background2.jpg)`
     let thirdPagePath = `url(assets/Background3.jpg)`
-    console.log(defaultPageDomSelector.style.backgroundImage.replace(/"/g,'') )
 
     let pageArray = [firstPagePath,secondPagePath,thirdPagePath]
 
@@ -31,73 +64,6 @@ function changeBackgroundImg(){
     }
 
 }
-
-async function getCurrentPosition(){
-     
-        let url = `https://ipinfo.io/json?token=3bd29cca703424` 
-
-        try {
-
-            let response = await fetch(url) 
-            var data = await response.json()
-            
-        } catch (e) {
-
-            alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
-
-        }
-        
-        let arr = data.loc.split(',').reverse()
-        let Longitude  = arr[0]
-        let Latitude = arr[1]
-        createLocation(Latitude ,Longitude)
-        getCurrentWeather(Latitude ,Longitude)
-
-}
-
-
-document.querySelector('.searchButton').addEventListener('click',getPosition)
-document.querySelector('.citySearch').addEventListener('keyup', (event)=>{ if(event.key === "Enter"){
-    getPosition()
-}} )
-
-async function getPosition(){
-
-    let city = document.querySelector('.citySearch').value
-    let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
-    try {
-
-        let response = await fetch(url) 
-        var data = await response.json()
-        
-    } catch (e) {
-
-        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
-        
-    }
-
-
-    if(data.features[0] === undefined){
-        alert(`несуществуещие место`)
-    }
-    
-    try {
-
-        var arr = data.features[0].center
-        
-    } catch (e) {
-
-        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
-        
-    }
-
-    let Latitude = arr[0]
-    let Longitude = arr[1]
-    createLocation(Longitude , Latitude)
-    getCurrentWeather(Longitude , Latitude)
-
-}
-
 
  function createLocation(Latitude , Longitude){
 
@@ -130,15 +96,85 @@ async function getCurrentWeather(lat,lon){
 
 }
 
-
 function createWeather(data){
-
-    
 
     document.querySelector('.avg_temp_c').innerHTML= `${data.current.temp_c}`
     document.querySelector('.feelsLike_c').innerHTML= `${data.current.feelslike_c}`
     document.querySelector('.weatherConditionText').innerHTML= `${data.current.condition.text}`
     document.querySelector('.weatherIcon').src= `${data.current.condition.icon}`
     
+}
 
+async function getPosition(){
+
+    let city = document.querySelector('.citySearch').value
+    let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
+    try {
+
+        let response = await fetch(url) 
+        var data = await response.json()
+        
+    } catch (e) {
+
+        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
+        
+    }
+
+    if(data.features[0] === undefined){
+        alert(`несуществуещие место`)
+    }
+    
+    try {
+
+        var arr = data.features[0].center
+        
+    } catch (e) {
+
+        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
+        
+    }
+
+    let Latitude = arr[0]
+    let Longitude = arr[1]
+    createLocation(Longitude , Latitude)
+    getCurrentWeather(Longitude , Latitude)
+
+}
+
+async function autocomplete() {
+   
+    let cityInput = document.querySelector('.citySearch').value
+    let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${cityInput}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
+
+    let response = await fetch(url) 
+    let data = await response.json()
+    let featuresArr = data.features
+    let cityArrToShow = []
+        
+    for (let i = 0; i < featuresArr.length; i++) {
+        
+        cityArrToShow.push(featuresArr[i].text)
+
+    }
+    console.log(cityArrToShow)
+
+   
+  if (cityInput.length > 0) {
+
+    let autocomplete_results = document.querySelector("#autocomplete-results");
+    autocomplete_results.innerHTML = '';
+
+    for (let i = 0; i < cityArrToShow.length; i++) {
+
+      autocomplete_results.innerHTML += '<li>' + cityArrToShow[i] + '</li>';
+
+    }
+    autocomplete_results.style.display = 'block';
+
+  } else {
+
+    cityArrToShow = [];
+    autocomplete_results.innerHTML = '';
+
+  }
 }
