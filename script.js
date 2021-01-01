@@ -177,12 +177,16 @@ async function autocomplete() {
     autocomplete_results.innerHTML = '';
 
   }
-    document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclick =function(){
 
-        document.querySelector('.citySearch').value = el.textContent
-        
-    }})
+  document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclick =function(){
+
+    document.querySelector('.citySearch').value = el.textContent
+    getPosition()
+
+}})
+
 }
+
 
 
 
