@@ -141,7 +141,16 @@ async function getPosition(){
 
 }
 
-async function autocomplete() {
+async function autocomplete(e) {
+
+
+    if (e.keyCode == '38') {
+        throw new Error('This is not an error. This is just to abort javascript');;
+    }
+
+    if(e.keyCode == "40"){
+        throw new Error('This is not an error. This is just to abort javascript');;
+    }
    
     let cityInput = document.querySelector('.citySearch').value
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${cityInput}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
@@ -156,9 +165,7 @@ async function autocomplete() {
         cityArrToShow.push(featuresArr[i].text)
 
     }
-    console.log(cityArrToShow)
 
-   
   if (cityInput.length > 0) {
 
     let autocomplete_results = document.querySelector("#autocomplete-results");
@@ -178,7 +185,7 @@ async function autocomplete() {
 
   }
 
-  document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclick =function(){
+document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclick =function(){
 
     document.querySelector('.citySearch').value = el.textContent
     getPosition()
@@ -187,7 +194,41 @@ async function autocomplete() {
 
 }
 
+document.querySelector('.citySearch').addEventListener('keydown',aaa)
+
+function aaa(e){
+
+    if (e.keyCode == '38') {
+
+    }
+    else if (e.keyCode == '40') {
+        
+        let listOfSuggestions = document.querySelectorAll('#autocomplete-results li')
+
+        for (let i = 0; i < listOfSuggestions.length; i++) {
+
+            console.log(listOfSuggestions[i].classList.contains('autocomplete-active'))
 
 
+            if(listOfSuggestions[i].classList.contains('autocomplete-active')){
 
 
+                listOfSuggestions[i].classList.remove('autocomplete-active') 
+                
+
+
+            }else{
+                
+                listOfSuggestions[i].classList.add('autocomplete-active')
+                break;
+            }
+
+            
+            
+       
+            
+        }
+
+    }
+
+}
