@@ -146,14 +146,8 @@ async function getPosition(){
 async function autocomplete(e) {
 
 
-    if (e.keyCode == '38') {
-        throw new Error('This is not an error. This is just to abort javascript');;
-    }
+    if (e.keyCode != '38' && e.keyCode != "40") {
 
-    if(e.keyCode == "40"){
-        throw new Error('This is not an error. This is just to abort javascript');;
-    }
-   
     let cityInput = document.querySelector('.citySearch').value
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${cityInput}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
 
@@ -193,6 +187,7 @@ document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclic
     getPosition()
 
 }})
+    }
 
 }
 
@@ -204,7 +199,7 @@ function aaa(e){
     else if (e.keyCode == '40') {
         
         let listOfSuggestions = document.querySelectorAll('#autocomplete-results li')
-
+        let listChanged = false;
         for (let i = 0; i < listOfSuggestions.length; i++) {
 
             console.log(listOfSuggestions[i].classList.contains('autocomplete-active'))
@@ -213,20 +208,21 @@ function aaa(e){
             if(listOfSuggestions[i].classList.contains('autocomplete-active')){
 
 
-                listOfSuggestions[i].classList.remove('autocomplete-active') 
-                
+                listOfSuggestions[i].classList.remove('autocomplete-active')
 
+
+                listOfSuggestions[i + 1].classList.add('autocomplete-active')
+                listChanged = true;
+                break;
 
             }else{
-                
-                listOfSuggestions[i].classList.add('autocomplete-active')
-                break;
-            }
 
+            }
             
-            
-       
-            
+        }
+        if (!listChanged) {
+            listOfSuggestions[0].classList.add('autocomplete-active')
+
         }
 
     }
