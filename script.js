@@ -20,6 +20,8 @@ document.querySelector('.switchBackground').addEventListener('click',changeBackg
 
 document.querySelector('#countrySearch').addEventListener('keyup',autocomplete)
 
+document.querySelector('.citySearch').addEventListener('keydown',aaa)
+
 getCurrentPosition()
 
 async function getCurrentPosition(){
@@ -193,8 +195,6 @@ document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclic
 }})
 
 }
-
-document.querySelector('.citySearch').addEventListener('keydown',aaa)
 
 function aaa(e){
 
