@@ -13,6 +13,10 @@ var currentBgNumber = 0;
 
 document.querySelector('.searchButton').addEventListener('click',getPosition)
 
+window.onclick = function (){
+    document.querySelector('#autocomplete-results').style.display = 'none'
+}
+
 document.querySelector('.citySearch')
 .addEventListener('keyup', (event)=>{ 
 
@@ -33,13 +37,11 @@ document.querySelector('.citySearch')
 
 } )
 
-
-
 document.querySelector('.switchBackground').addEventListener('click',changeBackgroundImg)
 
 document.querySelector('#countrySearch').addEventListener('keyup',autocomplete)
 
-document.querySelector('.citySearch').addEventListener('keydown',aaa)
+document.querySelector('.citySearch').addEventListener('keydown',suggestArrowSwitcher)
 
 getCurrentPosition()
 
@@ -211,7 +213,7 @@ document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclic
 
 }
 
-function aaa(e){
+function suggestArrowSwitcher(e){
 
  if (e.key == 'ArrowUp' || e.key == 'ArrowDown') {
         
@@ -243,7 +245,7 @@ function aaa(e){
             }
             
         }
-        if (!listChanged) {
+        if (!listChanged && e.key == 'ArrowDown' ) {
             listOfSuggestions[0].classList.add('autocomplete-active')
 
         }
