@@ -14,7 +14,28 @@ var currentBgNumber = 0;
 document.querySelector('.searchButton').addEventListener('click',getPosition)
 
 document.querySelector('.citySearch')
-.addEventListener('keyup', (event)=>{ if(event.key === "Enter"){getPosition()}} )
+.addEventListener('keyup', (event)=>{ 
+
+    let isListContainBlack = false
+    document.querySelectorAll('#autocomplete-results li').forEach(e=>{
+        console.log(e)
+
+        if (e.classList.contains('autocomplete-active')){ isListContainBlack = true }
+    })
+
+    if(event.key === "Enter" && isListContainBlack){
+        document.querySelector('.citySearch').value = document.querySelector('.autocomplete-active').textContent
+        getPosition()
+        document.querySelector('#autocomplete-results').style.display = 'none'
+    }
+    else if(event.key === "Enter"){getPosition()}
+
+} )
+
+
+
+
+
 
 document.querySelector('.switchBackground').addEventListener('click',changeBackgroundImg)
 
@@ -146,7 +167,7 @@ async function getPosition(){
 async function autocomplete(e) {
 
 
-    if (e.keyCode != '38' && e.keyCode != "40") {
+    if (e.keyCode != '38' && e.keyCode != "40" && e.keyCode != '13') {
 
     let cityInput = document.querySelector('.citySearch').value
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${cityInput}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
@@ -193,27 +214,30 @@ document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclic
 
 function aaa(e){
 
-    if (e.keyCode == '38') {
-
-    }
-    else if (e.keyCode == '40') {
+ if (e.key == 'ArrowUp' || e.key == 'ArrowDown') {
         
         let listOfSuggestions = document.querySelectorAll('#autocomplete-results li')
         let listChanged = false;
         for (let i = 0; i < listOfSuggestions.length; i++) {
-
-            console.log(listOfSuggestions[i].classList.contains('autocomplete-active'))
-
 
             if(listOfSuggestions[i].classList.contains('autocomplete-active')){
 
 
                 listOfSuggestions[i].classList.remove('autocomplete-active')
 
+                if (e.key == 'ArrowUp') {
 
-                listOfSuggestions[i + 1].classList.add('autocomplete-active')
-                listChanged = true;
-                break;
+                    listOfSuggestions[i - 1].classList.add('autocomplete-active')
+                    listChanged = true;
+                    break;
+                    
+                } else {
+                    
+                    listOfSuggestions[i + 1].classList.add('autocomplete-active')
+                    listChanged = true;
+                    break;
+
+                }
 
             }else{
 
@@ -228,3 +252,5 @@ function aaa(e){
     }
 
 }
+
+
