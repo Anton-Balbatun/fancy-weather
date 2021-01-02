@@ -56,16 +56,7 @@ async function getCurrentPosition(){
      
     let url = `https://ipinfo.io/json?token=3bd29cca703424` 
 
-    try {
-
-        let response = await fetch(url) 
-        var data = await response.json()
-        
-    } catch (e) {
-
-        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
-
-    }
+   data = parsedData(url)
 
     let arr = data.loc.split(',').reverse()
     let Longitude  = arr[0]
@@ -148,13 +139,14 @@ async function getPosition(){
         time = performance.now() - time;
         console.log('Время выполнения = ', time);
 
-        var arr = data.features[0].center
 
     } catch (e) {
 
         alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
         
     }
+
+    var arr = data.features[0].center
 
     if(data.features[0] === undefined){
         alert(`несуществуещие место`)
@@ -248,7 +240,7 @@ function suggestArrowSwitcher(e){
             } 
             
         }
-        
+
         if (!listChanged && e.key == 'ArrowDown' ) {
             listOfSuggestions[0].classList.add('autocomplete-active')
 
@@ -258,4 +250,26 @@ function suggestArrowSwitcher(e){
 
     }
 
+}
+
+async function parsedData (url){
+
+    try {
+
+        var time = performance.now();
+
+        let response = await fetch(url) 
+        var data = await response.json()
+
+        time = performance.now() - time;
+        console.log('Время выполнения = ', time);
+
+
+    } catch (e) {
+
+        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
+
+    }
+
+    return data
 }
