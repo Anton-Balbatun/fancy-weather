@@ -13,8 +13,16 @@ var currentBgNumber = 0;
 
 document.querySelector('.searchButton').addEventListener('click',getPosition)
 
-window.onclick = function (){
-    document.querySelector('#autocomplete-results').style.display = 'none'
+window.onclick = function (event){
+
+
+
+    if(event.target.classList.contains("citySearch")){
+        document.querySelector('#autocomplete-results').style.display = 'block'
+    } else{
+        document.querySelector('#autocomplete-results').style.display = 'none'
+    }
+    
 }
 
 document.querySelector('.citySearch')
@@ -22,7 +30,6 @@ document.querySelector('.citySearch')
 
     let isListContainBlack = false
     document.querySelectorAll('#autocomplete-results li').forEach(e=>{
-        console.log(e)
 
         if (e.classList.contains('autocomplete-active')){ isListContainBlack = true }
     })
@@ -136,6 +143,8 @@ async function getPosition(){
 
         let response = await fetch(url) 
         var data = await response.json()
+
+
         
     } catch (e) {
 
@@ -175,6 +184,13 @@ async function autocomplete(e) {
     let response = await fetch(url) 
     let data = await response.json()
     let featuresArr = data.features
+
+    featuresArr = featuresArr.filter(item =>{
+
+       if(item.place_type[0] == 'place') {return true}
+    
+    })
+
     let cityArrToShow = []
         
     for (let i = 0; i < featuresArr.length; i++) {
@@ -248,6 +264,8 @@ function suggestArrowSwitcher(e){
         if (!listChanged && e.key == 'ArrowDown' ) {
             listOfSuggestions[0].classList.add('autocomplete-active')
 
+        } else if(!listChanged && e.key == 'ArrowUp'){
+            listOfSuggestions[listOfSuggestions.length-1].classList.add('autocomplete-active')
         }
 
     }
