@@ -56,7 +56,7 @@ async function getCurrentPosition(){
      
     let url = `https://ipinfo.io/json?token=3bd29cca703424` 
 
-   data = parsedData(url)
+    let data = await parsedData(url)
 
     let arr = data.loc.split(',').reverse()
     let Longitude  = arr[0]
@@ -101,17 +101,7 @@ function changeBackgroundImg(){
 async function getCurrentWeather(lat,lon){
 
     let url = `https://api.weatherapi.com/v1/forecast.json?key=0c6ecd00b4c34857933173038203105&q=${lat},${lon}&days=3` 
-
-    try {
-
-        let response = await fetch(url) 
-        var data = await response.json()
-        
-    } catch (e) {
-        
-        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
-        
-    }
+    let data = await parsedData(url)
     createWeather(data)
 
 }
@@ -129,24 +119,8 @@ async function getPosition(){
 
     let city = document.querySelector('.citySearch').value
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
-    try {
-
-        var time = performance.now();
-
-        let response = await fetch(url) 
-        var data = await response.json()
-
-        time = performance.now() - time;
-        console.log('Время выполнения = ', time);
-
-
-    } catch (e) {
-
-        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
-        
-    }
-
-    var arr = data.features[0].center
+    let data = await parsedData(url)
+    let arr = data.features[0].center
 
     if(data.features[0] === undefined){
         alert(`несуществуещие место`)
@@ -168,8 +142,7 @@ async function autocomplete(e) {
     let cityInput = document.querySelector('.citySearch').value
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${cityInput}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
 
-    let response = await fetch(url) 
-    let data = await response.json()
+    let data = await parsedData(url)
     let featuresArr = data.features
     let cityArrToShow = []
 
