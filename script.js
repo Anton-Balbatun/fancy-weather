@@ -27,13 +27,11 @@ document.querySelector('.citySearch')
         document.querySelector('.citySearch').value = document.querySelector('.autocomplete-active').textContent
         getPosition()
         document.querySelector('#autocomplete-results').style.display = 'none'
+        document.querySelector('.citySearch').blur()
     }
     else if(event.key === "Enter"){getPosition()}
 
 } )
-
-
-
 
 
 
@@ -206,6 +204,7 @@ document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclic
 
     document.querySelector('.citySearch').value = el.textContent
     getPosition()
+    document.querySelector('#autocomplete-results').style.display = 'none'
 
 }})
     }
