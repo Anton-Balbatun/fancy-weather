@@ -8,8 +8,8 @@ var map = new mapboxgl.Map({
 });
 
 
-
 var currentBgNumber = 0;
+
 
 document.querySelector('.searchButton').addEventListener('click',getPosition)
 
@@ -78,7 +78,6 @@ async function getCurrentPosition(){
 function changeBackgroundImg(){
 
     let defaultPageDomSelector = document.querySelector('.defaultPage')
-
     let firstPagePath = `url(assets/Background1.jpg)`
     let secondPagePath = `url(assets/Background2.jpg)`
     let thirdPagePath = `url(assets/Background3.jpg)`
@@ -141,11 +140,16 @@ async function getPosition(){
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
     try {
 
+        var time = performance.now();
+
         let response = await fetch(url) 
         var data = await response.json()
 
+        time = performance.now() - time;
+        console.log('Время выполнения = ', time);
 
-        
+        var arr = data.features[0].center
+
     } catch (e) {
 
         alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
@@ -156,18 +160,9 @@ async function getPosition(){
         alert(`несуществуещие место`)
     }
     
-    try {
-
-        var arr = data.features[0].center
-        
-    } catch (e) {
-
-        alert( ` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} ` );
-        
-    }
-
     let Latitude = arr[0]
     let Longitude = arr[1]
+
     createLocation(Longitude , Latitude)
     getCurrentWeather(Longitude , Latitude)
 
@@ -176,7 +171,7 @@ async function getPosition(){
 async function autocomplete(e) {
 
 
-    if (e.keyCode != '38' && e.keyCode != "40" && e.keyCode != '13') {
+    if (e.key != 'ArrowUp' && e.key != "ArrowDown" && e.key != 'Enter') {
 
     let cityInput = document.querySelector('.citySearch').value
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${cityInput}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
@@ -184,47 +179,42 @@ async function autocomplete(e) {
     let response = await fetch(url) 
     let data = await response.json()
     let featuresArr = data.features
-
-    featuresArr = featuresArr.filter(item =>{
-
-       if(item.place_type[0] == 'place') {return true}
-    
-    })
-
     let cityArrToShow = []
-        
+
+    featuresArr = featuresArr.filter(item =>{ if(item.place_type[0] == 'place') { return true }})
+
     for (let i = 0; i < featuresArr.length; i++) {
         
         cityArrToShow.push(featuresArr[i].text)
 
     }
 
-  if (cityInput.length > 0) {
+    if (cityInput.length > 0) {
 
-    let autocomplete_results = document.querySelector("#autocomplete-results");
-    autocomplete_results.innerHTML = '';
+        let autocomplete_results = document.querySelector("#autocomplete-results");
+        autocomplete_results.innerHTML = '';
 
-    for (let i = 0; i < cityArrToShow.length; i++) {
+            for (let i = 0; i < cityArrToShow.length; i++) {
 
-      autocomplete_results.innerHTML += '<li>' + cityArrToShow[i] + '</li>';
+            autocomplete_results.innerHTML += '<li>' + cityArrToShow[i] + '</li>';
+
+            }
+        autocomplete_results.style.display = 'block';
+
+    } else {
+
+        cityArrToShow = [];
+        autocomplete_results.innerHTML = '';
 
     }
-    autocomplete_results.style.display = 'block';
 
-  } else {
+    document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclick =function(){
 
-    cityArrToShow = [];
-    autocomplete_results.innerHTML = '';
+        document.querySelector('.citySearch').value = el.textContent
+        document.querySelector('#autocomplete-results').style.display = 'none'
+        getPosition()
 
-  }
-
-document.querySelectorAll('#autocomplete-results li').forEach(el => {  el.onclick =function(){
-
-    document.querySelector('.citySearch').value = el.textContent
-    getPosition()
-    document.querySelector('#autocomplete-results').style.display = 'none'
-
-}})
+        }})
     }
 
 }
@@ -238,7 +228,6 @@ function suggestArrowSwitcher(e){
         for (let i = 0; i < listOfSuggestions.length; i++) {
 
             if(listOfSuggestions[i].classList.contains('autocomplete-active')){
-
 
                 listOfSuggestions[i].classList.remove('autocomplete-active')
 
@@ -256,11 +245,10 @@ function suggestArrowSwitcher(e){
 
                 }
 
-            }else{
-
-            }
+            } 
             
         }
+        
         if (!listChanged && e.key == 'ArrowDown' ) {
             listOfSuggestions[0].classList.add('autocomplete-active')
 
@@ -271,5 +259,3 @@ function suggestArrowSwitcher(e){
     }
 
 }
-
-
