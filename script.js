@@ -233,19 +233,7 @@ function suggestArrowSwitcher(e){
 
 async function parsedData (url){
 
-    apisInLocalStorage.push(url)
-    localStorage.setItem('APIs', JSON.stringify(apisInLocalStorage))
-    let storageApis = JSON.parse(localStorage.getItem('APIs'))
-    
-    console.log(storageApis)
 
-/*     for (let i = 0; i < storageData.length; i++) {
-        
-        if(storageData[i] == url){
-            console.log('asdasdasdasdsad')
-        }
-        
-    } */
 
     try {
 
@@ -254,14 +242,30 @@ async function parsedData (url){
         let response = await fetch(url) 
         var data = await response.json()
 
+        time = performance.now() - time;
+        console.log('Время выполнения = ', time);
+
+
+        apisInLocalStorage.push(url)
+        localStorage.setItem('APIs', JSON.stringify(apisInLocalStorage))
+        let storageApis = JSON.parse(localStorage.getItem('APIs'))
+        
+        console.log(storageApis)
+    
+        for (let i = 0; i < storageApis.length; i++) {
+            
+            if(storageApis[i] === url){
+                console.log('asdasdasdasdsad')
+            }
+            
+        }
+
         apisResult.push(data)
         localStorage.setItem('Responses', JSON.stringify(apisResult))
         let storageResponse = JSON.parse(localStorage.getItem('Responses'))
         console.log(storageResponse)
-    
 
-        time = performance.now() - time;
-        console.log('Время выполнения = ', time);
+        
 
 
     } catch (e) {
