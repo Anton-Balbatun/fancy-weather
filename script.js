@@ -6,9 +6,12 @@ var map = new mapboxgl.Map({
     zoom: 8,
     style: 'mapbox://styles/mapbox/streets-v11'
 });
-
+localStorage.clear()
 
 var currentBgNumber = 0;
+var apisInLocalStorage = []
+var apisResult = []
+
 
 
 document.querySelector('.searchButton').addEventListener('click',getPosition)
@@ -119,6 +122,9 @@ async function getPosition(){
 
     let city = document.querySelector('.citySearch').value
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
+    apisInLocalStorage.push(url)
+    localStorage.setItem('APIs', JSON.stringify(apisInLocalStorage))
+
     let data = await parsedData(url)
     let arr = data.features[0].center
 
@@ -227,12 +233,32 @@ function suggestArrowSwitcher(e){
 
 async function parsedData (url){
 
+    apisInLocalStorage.push(url)
+    localStorage.setItem('APIs', JSON.stringify(apisInLocalStorage))
+    let storageApis = JSON.parse(localStorage.getItem('APIs'))
+    
+    console.log(storageApis)
+
+/*     for (let i = 0; i < storageData.length; i++) {
+        
+        if(storageData[i] == url){
+            console.log('asdasdasdasdsad')
+        }
+        
+    } */
+
     try {
 
         var time = performance.now();
 
         let response = await fetch(url) 
         var data = await response.json()
+
+        apisResult.push(data)
+        localStorage.setItem('Responses', JSON.stringify(apisResult))
+        let storageResponse = JSON.parse(localStorage.getItem('Responses'))
+        console.log(storageResponse)
+    
 
         time = performance.now() - time;
         console.log('Время выполнения = ', time);
@@ -246,3 +272,4 @@ async function parsedData (url){
 
     return data
 }
+
