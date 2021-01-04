@@ -10,8 +10,9 @@ var map = new mapboxgl.Map({
 localStorage.clear()
 
 var currentBgNumber = 0;
-var apisInLocalStorage = []
-var apisResult = []
+var apisResultObject = {}
+
+setInterval(removeOldApis,60000)
 
 
 
@@ -125,8 +126,6 @@ async function getPosition() {
 
     let city = document.querySelector('.citySearch').value
     let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
-    apisInLocalStorage.push(url)
-    localStorage.setItem('APIs', JSON.stringify(apisInLocalStorage))
 
     let data = await parsedData(url)
     let arr = data.features[0].center
@@ -240,49 +239,53 @@ function suggestArrowSwitcher(e) {
 
 }
 
+function removeOldApis(){
+
+    apisResultObject = JSON.parse(localStorage.getItem('APIs'))
+    for (let key in apisResultObject){
+        if( Date.now() - apisResultObject[key].timestamp > 3600000){
+            delete apisResultObject[key]
+
+        }
+    }
+    localStorage.setItem('APIs', JSON.stringify(apisResultObject))
+}
+
 async function parsedData(url) {
 
+    if (localStorage.APIs) {
 
-
-    try {
-
-        var time = performance.now();
-
-        let response = await fetch(url)
-        var data = await response.json()
-
-        time = performance.now() - time;
-        console.log('Время выполнения = ', time);
-
-
-        apisInLocalStorage.push(url)
-        localStorage.setItem('APIs', JSON.stringify(apisInLocalStorage))
-        let storageApis = JSON.parse(localStorage.getItem('APIs'))
-        
-        console.log(storageApis)
-    
-        for (let i = 0; i < storageApis.length; i++) {
-            
-            if(storageApis[i] === url){
-                console.log('asdasdasdasdsad')
-            }
-            
-        }
-
-        apisResult.push(data)
-        localStorage.setItem('Responses', JSON.stringify(apisResult))
-        let storageResponse = JSON.parse(localStorage.getItem('Responses'))
-        console.log(storageResponse)
-
-        
-
-
-    } catch (e) {
-
-        alert(` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} `);
+        apisResultObject = JSON.parse(localStorage.getItem('APIs'))
 
     }
+    if(url in apisResultObject){
+        data = apisResultObject[url]
 
+    } else {
+
+        try {
+
+            var time = performance.now();
+
+            let response = await fetch(url)
+            var data = await response.json()
+
+            time = performance.now() - time;
+            console.log('Время выполнения = ', time);
+            console.log('!!!!!!!!', url, Date.now());
+
+            data['timestamp'] = Date.now()
+          //  apisResultObject[url] = {"data": data, "t": Date.now()}
+            apisResultObject[url] = data
+            localStorage.setItem('APIs', JSON.stringify(apisResultObject))
+
+
+        } catch (e) {
+
+            alert(` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} `);
+
+        }
+    }
     return data
 }
 

@@ -1,0 +1,12 @@
+<html>
+<input type="text" id='search'>
+<script>
+    document.querySelector('#search').addEventListener('keyup', autocomplete)
+
+    async function autocomplete(e) {
+        console.log('key', e.key, Date.now() % 10000);
+        let inputValue = document.querySelector('#search').value
+        console.log('inputValue', inputValue, Date.now() % 10000);
+    }
+</script>
+</html>
