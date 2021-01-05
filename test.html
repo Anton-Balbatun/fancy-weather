@@ -1,12 +1,35 @@
 <html>
 <input type="text" id='search'>
 <script>
-    document.querySelector('#search').addEventListener('keyup', autocomplete)
+    class Animal {
 
-    async function autocomplete(e) {
-        console.log('key', e.key, Date.now() % 10000);
-        let inputValue = document.querySelector('#search').value
-        console.log('inputValue', inputValue, Date.now() % 10000);
+        changeBg = 0;
+
+         constructor(a, b) {
+             this.changeBg = a + b;
+         }
+
+        walk() {
+            let a = 1;
+            this.changeBg += 1;
+            console.log(this.changeBg);
+        }
     }
+    let a = new Animal(1, 2);
+a.walk();
+a.walk();
+a.walk();
+a.walk();
+    let b = new Animal();
+
+//    document.querySelector('#search').addEventListener('keyup', a.walk)
+
+    // async function autocomplete(e) {
+    //     console.log('key', e.key, Date.now() % 10000);
+    //     let inputValue = document.querySelector('#search').value
+    //     console.log('inputValue', inputValue, Date.now() % 10000);
+    //     a.walk();
+    //     console.log(a.changeBg);
+    // }
 </script>
 </html>
