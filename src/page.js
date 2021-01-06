@@ -17,6 +17,12 @@ class Page {
 
 }
 
+let background = new Background(['url(assets/Background1.jpg)','url(assets/Background2.jpg)','url(assets/Background3.jpg'])
+document.querySelector('.switchBackground').addEventListener('click', background.changeBackgroundImg.bind(background))
+
+let location = new Location()
+
+location.getCurrentPosition()
 
 let page = new Page("Hell0 i am page")
 page.sayHi()    

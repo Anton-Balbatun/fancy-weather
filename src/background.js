@@ -25,8 +25,7 @@ export class Background {
 
 }
 
-let background = new Background(['url(assets/Background1.jpg)','url(assets/Background2.jpg)','url(assets/Background3.jpg'])
-document.querySelector('.switchBackground').addEventListener('click', background.changeBackgroundImg.bind(background))
+
 
 
 
