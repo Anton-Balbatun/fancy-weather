@@ -1,4 +1,8 @@
 import {Background} from "./background.js";
+import {WeatherAPI} from "./WeatherAPI.js";
+import {LocationGetCurrentIpAPI} from "./locationGetCurrentIpAPI.js";
+import {LocationMapAPI} from "./locationMapAPI.js";
+
 import {Location} from "./location.js";
 import {Weather} from "./weather.js";
 
@@ -6,23 +10,17 @@ import {Weather} from "./weather.js";
 
 class Page {
 
-    constructor(name) {
-        this.name = name;
-      }
-    
-      sayHi() {
-        console.log(this.name);
-      }
-
-
 }
+let weatherAPI = new WeatherAPI()
+let locationGetCurrentIpAPI = new LocationGetCurrentIpAPI()
+let locationMapAPI = new LocationMapAPI()
 
-let background = new Background(['url(assets/Background1.jpg)','url(assets/Background2.jpg)','url(assets/Background3.jpg'])
-document.querySelector('.switchBackground').addEventListener('click', background.changeBackgroundImg.bind(background))
 
-let location = new Location()
+let background = new Background(['url(assets/Background1.jpg)','url(assets/Background2.jpg)','url(assets/Background3.jpg']);
+let weather = new Weather(weatherAPI);
+let location = new Location(weather,locationGetCurrentIpAPI,locationMapAPI);
 
-location.getCurrentPosition()
+document.querySelector('.switchBackground').addEventListener('click', background.changeBackgroundImg.bind(background));
 
 window.onclick = function (event) {
 
@@ -48,19 +46,21 @@ document.querySelector('.citySearch')
 
         if (event.key === "Enter" && isListContainBlack) {
             document.querySelector('.citySearch').value = document.querySelector('.autocomplete-active').textContent
-            location.getPosition().bind(location)
+            location.getPosition()//.bind(location)
             document.querySelector('#autocomplete-results').style.display = 'none'
             document.querySelector('.citySearch').blur()
         } else if (event.key === "Enter") {
-            location.getPosition().bind(location)
+            location.getPosition()//.bind(location)
         }
 
-    })
+    });
 
+document.querySelector('.searchButton').addEventListener('click', location.getPosition.bind(location));
 
+document.querySelector('#countrySearch').addEventListener('keyup', location.autocomplete.bind(location));
 
-document.querySelector('.searchButton').addEventListener('click', location.getPosition.bind(location))
+document.querySelector('.citySearch').addEventListener('keydown', location.suggestArrowSwitcher);
 
-document.querySelector('#countrySearch').addEventListener('keyup', location.autocomplete.bind(location))
+setInterval(weather.removeOldApis,60000);
+location.getCurrentPosition();
 
-document.querySelector('.citySearch').addEventListener('keydown', location.suggestArrowSwitcher)

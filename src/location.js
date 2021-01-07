@@ -11,30 +11,33 @@ let map = new mapboxgl.Map({
 
 export class Location {
 
-
-    apisResultObject = {}
+    constructor(weather, LocationGetCurrentIpAPI, locationMapAPI) {
+        this.weather = weather;
+        this.locationGetCurrentIpAPI = LocationGetCurrentIpAPI
+        this.locationMapAPI = locationMapAPI
+    }
 
     suggestArrowSwitcher(e) {
 
         if (e.key == 'ArrowUp' || e.key == 'ArrowDown') {
 
-            let listOfSuggestions = document.querySelectorAll('#autocomplete-results li')
+            let listOfSuggestions = document.querySelectorAll('#autocomplete-results li');
             let listChanged = false;
             for (let i = 0; i < listOfSuggestions.length; i++) {
 
                 if (listOfSuggestions[i].classList.contains('autocomplete-active')) {
 
-                    listOfSuggestions[i].classList.remove('autocomplete-active')
+                    listOfSuggestions[i].classList.remove('autocomplete-active');
 
                     if (e.key == 'ArrowUp') {
 
-                        listOfSuggestions[i - 1].classList.add('autocomplete-active')
+                        listOfSuggestions[i - 1].classList.add('autocomplete-active');
                         listChanged = true;
                         break;
 
                     } else {
 
-                        listOfSuggestions[i + 1].classList.add('autocomplete-active')
+                        listOfSuggestions[i + 1].classList.add('autocomplete-active');
                         listChanged = true;
                         break;
 
@@ -45,26 +48,15 @@ export class Location {
             }
 
             if (!listChanged && e.key == 'ArrowDown') {
-                listOfSuggestions[0].classList.add('autocomplete-active')
+                listOfSuggestions[0].classList.add('autocomplete-active');
 
             } else if (!listChanged && e.key == 'ArrowUp') {
-                listOfSuggestions[listOfSuggestions.length - 1].classList.add('autocomplete-active')
+                listOfSuggestions[listOfSuggestions.length - 1].classList.add('autocomplete-active');
+
             }
 
         }
 
-    }
-
-    removeOldApis() {
-
-        this.apisResultObject = JSON.parse(localStorage.getItem('APIs'))
-        for (let key in this.apisResultObject) {
-            if (Date.now() - this.apisResultObject[key].timestamp > 3600000) {
-                delete this.apisResultObject[key]
-
-            }
-        }
-        localStorage.setItem('APIs', JSON.stringify(this.apisResultObject))
     }
 
     createLocation(Latitude, Longitude) {
@@ -80,76 +72,34 @@ export class Location {
 
     }
 
-    async parsedData(url) {
-
-        if (localStorage.APIs) {
-
-            this.apisResultObject = JSON.parse(localStorage.getItem('APIs'))
-
-        }
-        if (url in this.apisResultObject) {
-            data = this.apisResultObject[url]
-
-        } else {
-
-            try {
-
-                var time = performance.now();
-
-                let response = await fetch(url)
-                var data = await response.json()
-
-                time = performance.now() - time;
-                console.log('Время выполнения = ', time);
-                console.log('!!!!!!!!', url, Date.now());
-
-                data['timestamp'] = Date.now()
-                //  apisResultObject[url] = {"data": data, "t": Date.now()}
-                this.apisResultObject[url] = data
-                localStorage.setItem('APIs', JSON.stringify(this.apisResultObject))
-
-
-            } catch (e) {
-
-                alert(` Извините,произошла ошибка, Name: ${e.name} Message: ${e.message} `);
-
-            }
-        }
-        return data
-    }
-
     async getCurrentPosition() {
 
-        let url = `https://ipinfo.io/json?token=3bd29cca703424`
-
-        let data = await this.parsedData(url)
-
-        let arr = data.loc.split(',').reverse()
-        let Longitude = arr[0]
-        let Latitude = arr[1]
-        this.createLocation(Latitude, Longitude)
-        weather.getCurrentWeather(Latitude, Longitude)
-
+        let arr = await this.locationGetCurrentIpAPI.getLocationCordinates()
+        console.log(arr)
+        let Longitude = arr[0];
+        let Latitude = arr[1];
+        this.createLocation(Latitude, Longitude);
+        this.weather.getCurrentWeather(Latitude, Longitude);
 
     }
 
     async getPosition() {
 
-        let city = document.querySelector('.citySearch').value
-        let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${city}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
+        let city = document.querySelector('.citySearch').value;
 
-        let data = await this.parsedData(url)
-        let arr = data.features[0].center
+        let data = await this.locationMapAPI.parseForGetPosition(city)
+
+        let arr = data.features[0].center;
 
         if (data.features[0] === undefined) {
-            alert(`несуществуещие место`)
+            alert(`несуществуещие место`);
         }
 
-        let Latitude = arr[0]
-        let Longitude = arr[1]
+        let Latitude = arr[0];
+        let Longitude = arr[1];
 
-        this.createLocation(Longitude, Latitude)
-        getCurrentWeather(Longitude, Latitude)
+        this.createLocation(Longitude, Latitude);
+        this.weather.getCurrentWeather(Longitude, Latitude);
 
     }
 
@@ -157,22 +107,20 @@ export class Location {
 
         if (e.key != 'ArrowUp' && e.key != "ArrowDown" && e.key != 'Enter') {
 
-            let cityInput = document.querySelector('.citySearch').value
-            let url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${cityInput}.json?access_token=pk.eyJ1IjoiYW50b241NTMzMjIiLCJhIjoiY2thdXZmbDRoMDV6YzJ4dTk3Ymk5b3E4dyJ9.mdkX1Z26DQVJEa54fEEGTA`
-
-            let data = await this.parsedData(url)
-            let featuresArr = data.features
-            let cityArrToShow = []
+            let cityInput = document.querySelector('.citySearch').value;
+            let data = await this.locationMapAPI.parseForAutocomplete(cityInput)
+            let featuresArr = data.features;
+            let cityArrToShow = [];
 
             featuresArr = featuresArr.filter(item => {
                 if (item.place_type[0] == 'place') {
-                    return true
+                    return true;
                 }
             })
 
             for (let i = 0; i < featuresArr.length; i++) {
 
-                cityArrToShow.push(featuresArr[i].text)
+                cityArrToShow.push(featuresArr[i].text);
 
             }
 
@@ -190,24 +138,21 @@ export class Location {
 
             } else {
 
-                cityArrToShow = [];
                 autocomplete_results.innerHTML = '';
 
             }
 
             document.querySelectorAll('#autocomplete-results li').forEach(el => {
-                el.onclick = this.onclickList.bind(this)})
-
+                el.onclick = this.onclickList.bind(this)});
 
         }
 
     }
 
     onclickList(e) {
-        console.log(this)
 
-        document.querySelector('.citySearch').value = e.target.textContent
-        document.querySelector('#autocomplete-results').style.display = 'none'
+        document.querySelector('.citySearch').value = e.target.textContent;
+        document.querySelector('#autocomplete-results').style.display = 'none';
         this.getPosition()
 
     }
