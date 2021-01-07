@@ -64,7 +64,3 @@ document.querySelector('.searchButton').addEventListener('click', location.getPo
 document.querySelector('#countrySearch').addEventListener('keyup', location.autocomplete.bind(location))
 
 document.querySelector('.citySearch').addEventListener('keydown', location.suggestArrowSwitcher)
-
-
-let page = new Page("Hell0 i am page")
-page.sayHi()

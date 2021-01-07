@@ -128,7 +128,7 @@ export class Location {
         let Longitude = arr[0]
         let Latitude = arr[1]
         this.createLocation(Latitude, Longitude)
-        //getCurrentWeather(Latitude, Longitude)
+        weather.getCurrentWeather(Latitude, Longitude)
 
 
     }
@@ -149,7 +149,7 @@ export class Location {
         let Longitude = arr[1]
 
         this.createLocation(Longitude, Latitude)
-        //getCurrentWeather(Longitude, Latitude)
+        getCurrentWeather(Longitude, Latitude)
 
     }
 
@@ -206,9 +206,8 @@ export class Location {
     onclickList(e) {
         console.log(this)
 
-        document.querySelector('.citySearch').value = e.textContent
+        document.querySelector('.citySearch').value = e.target.textContent
         document.querySelector('#autocomplete-results').style.display = 'none'
-        console.log(e)
         this.getPosition()
 
     }
