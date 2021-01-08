@@ -102,18 +102,18 @@ export class Location {
         if (e.key != 'ArrowUp' && e.key != "ArrowDown" && e.key != 'Enter') {
 
             let cityInput = document.querySelector('.citySearch').value;
-            let featuresArr = await this.locationMapAPI.parseForAutocomplete(cityInput)            ;
+            let suggestList = await this.locationMapAPI.parseForAutocomplete(cityInput)            ;
             let cityArrToShow = [];
 
-            featuresArr = featuresArr.filter(item => {
+            suggestList = suggestList.filter(item => {
                 if (item.place_type[0] == 'place') {
                     return true;
                 }
             })
 
-            for (let i = 0; i < featuresArr.length; i++) {
+            for (let i = 0; i < suggestList.length; i++) {
 
-                cityArrToShow.push(featuresArr[i].text);
+                cityArrToShow.push(suggestList[i].text);
 
             }
 
