@@ -3,12 +3,13 @@ export class LocationGetCurrentIpAPI extends BaseAPI{
     constructor() {
         super()
     }
-    async getLocationCordinates(){
+    async getCurrentLocationCordinates(){
         let url = `https://ipinfo.io/json?token=3bd29cca703424`;
 
         let data = await this.parsedData(url);
 
         let arr = data.loc.split(',').reverse();
-        return arr
+        
+        return {"latitude":arr[0], "longitude":arr[1]}
     }
 }

@@ -74,12 +74,11 @@ export class Location {
 
     async getCurrentPosition() {
 
-        let arr = await this.locationGetCurrentIpAPI.getLocationCordinates()
-        console.log(arr)
-        let Longitude = arr[0];
-        let Latitude = arr[1];
-        this.createLocation(Latitude, Longitude);
-        this.weather.getCurrentWeather(Latitude, Longitude);
+        let data = await this.locationGetCurrentIpAPI.getCurrentLocationCordinates()
+        let longitude = data.latitude;
+        let latitude = data.longitude;
+        this.createLocation(latitude, longitude);
+        this.weather.getCurrentWeather(latitude, longitude);
 
     }
 
@@ -87,19 +86,14 @@ export class Location {
 
         let city = document.querySelector('.citySearch').value;
 
-        let data = await this.locationMapAPI.parseForGetPosition(city)
+        let data = await this.locationMapAPI.getPositionCoordinates(city)
 
-        let arr = data.features[0].center;
 
-        if (data.features[0] === undefined) {
-            alert(`несуществуещие место`);
-        }
+        let latitude = data.latitude;
+        let longitude = data.longitude;
 
-        let Latitude = arr[0];
-        let Longitude = arr[1];
-
-        this.createLocation(Longitude, Latitude);
-        this.weather.getCurrentWeather(Longitude, Latitude);
+        this.createLocation(longitude, latitude);
+        this.weather.getCurrentWeather(longitude, latitude);
 
     }
 
@@ -108,8 +102,7 @@ export class Location {
         if (e.key != 'ArrowUp' && e.key != "ArrowDown" && e.key != 'Enter') {
 
             let cityInput = document.querySelector('.citySearch').value;
-            let data = await this.locationMapAPI.parseForAutocomplete(cityInput)
-            let featuresArr = data.features;
+            let featuresArr = await this.locationMapAPI.parseForAutocomplete(cityInput)            ;
             let cityArrToShow = [];
 
             featuresArr = featuresArr.filter(item => {
